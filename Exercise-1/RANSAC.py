@@ -41,7 +41,7 @@ axis_min = 0.6
 axis_max = 1.1
 passthrough.set_filter_limits(axis_min, axis_max)
 
-# Assign y axis and range to the passthrough filter object. Needed as i see frount of the table in the pcd file
+# Assign y axis and range to the passthrough filter object. Needed as i see front of the table in the pcd file
 passthrough = cloud_filtered.make_passthrough_filter()
 filter_axis = 'y'
 passthrough.set_filter_field_name(filter_axis)
