@@ -41,6 +41,14 @@ axis_min = 0.6
 axis_max = 1.1
 passthrough.set_filter_limits(axis_min, axis_max)
 
+passthrough = cloud_filtered.make_passthrough_filter()
+filter_axis = 'y'
+passthrough.set_filter_field_name(filter_axis)
+axis_min = -2
+axis_max = -1.4
+passthrough.set_filter_limits(axis_min, axis_max)
+cloud_filtered = passthrough.filter()
+
 # Finally use the filter function to obtain the resultant point cloud. 
 cloud_filtered = passthrough.filter()
 filename = 'pass_through_filtered.pcd'
