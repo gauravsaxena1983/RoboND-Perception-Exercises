@@ -30,7 +30,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Voxel Grid Downsampling
     vox = cloud.make_voxel_grid_filter()
-    LEAF_SIZE = 0.005 
+    LEAF_SIZE = 0.01 
     vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
     cloud_filtered = vox.filter()
 
@@ -38,16 +38,17 @@ def pcl_callback(pcl_msg):
     passthrough = cloud_filtered.make_passthrough_filter()
     filter_axis = 'z'
     passthrough.set_filter_field_name(filter_axis)
-    axis_min = 0.6095
+    axis_min = 0.6
     axis_max = 1.1
     passthrough.set_filter_limits(axis_min, axis_max)
     cloud_filtered = passthrough.filter()
 
+    # Assign y axis and range to the passthrough filter object. Needed as i see front of the table in the pcd file
     passthrough = cloud_filtered.make_passthrough_filter()
     filter_axis = 'y'
     passthrough.set_filter_field_name(filter_axis)
-    axis_min = -0.456
-    axis_max = 0.456
+    axis_min = -2
+    axis_max = -1.4
     passthrough.set_filter_limits(axis_min, axis_max)
     cloud_filtered = passthrough.filter()
     
@@ -55,7 +56,7 @@ def pcl_callback(pcl_msg):
     seg = cloud_filtered.make_segmenter()
     seg.set_model_type(pcl.SACMODEL_PLANE)
     seg.set_method_type(pcl.SAC_RANSAC)
-    max_distance = 0.006
+    max_distance = 0.01
     seg.set_distance_threshold(max_distance)
 
     inliers, coefficients = seg.segment()
@@ -68,9 +69,9 @@ def pcl_callback(pcl_msg):
     white_cloud = XYZRGB_to_XYZ(cloud_objects)
     tree = white_cloud.make_kdtree()
     ec = white_cloud.make_EuclideanClusterExtraction()
-    ec.set_ClusterTolerance(0.03)
-    ec.set_MinClusterSize(10)
-    ec.set_MaxClusterSize(9000)
+    ec.set_ClusterTolerance(0.015)
+    ec.set_MinClusterSize(100)
+    ec.set_MaxClusterSize(2500)
     ec.set_SearchMethod(tree)
     cluster_indices = ec.Extract()
 
@@ -130,7 +131,7 @@ def pcl_callback(pcl_msg):
 
         # Publish a label into RViz
         label_pos = list(white_cloud[pts_list[0]])
-        label_pos[2] += .2
+        label_pos[2] += .4
         object_markers_pub.publish(make_label(label,label_pos, index))
 
         # Add the detected object to the list of detected objects.
